@@ -9,6 +9,7 @@ import (
 func main() {
 
 	const url = "github.com/gostaticanalysis/skeleton/v2"
+	//const url = "github.com/tenntenn/greeting/tree/main/v2"
 
 	list_result, err := exec.Command("go", "list", "-json", "-m", "-versions", url).Output()
 
@@ -27,15 +28,15 @@ func main() {
 	fmt.Println(list.Versions)
 
 	for i := 0; i < len(list.Versions); i++ {
+		urlWithVersion := url + "@" + list.Versions[i]
 
-		get_result, err := exec.Command("go", "get", url+"@"+list.Versions[i]).Output()
+		_, err := exec.Command("go", "get", urlWithVersion).Output()
 
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(string(get_result))
 
-		list_result_of_version, err := exec.Command("go", "list", "-json", "-m", "-versions", url).Output()
+		list_result_of_version, err := exec.Command("go", "list", "-json", "-m", urlWithVersion).Output()
 
 		if err != nil {
 			fmt.Println(err)
@@ -49,13 +50,10 @@ func main() {
 		json.Unmarshal(list_result_of_version, &path)
 		fmt.Println(path.Dir)
 
-		vet_result, err := exec.Command("go", "vet", path.Dir).Output()
-
+		vet_result, err := exec.Command("go", "vet", "-json", path.Dir+"/...").CombinedOutput()
 		if err != nil {
 			fmt.Println(err)
 		}
 		fmt.Println(string(vet_result))
-
 	}
-
 }
