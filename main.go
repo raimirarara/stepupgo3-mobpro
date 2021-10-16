@@ -84,9 +84,9 @@ func main() {
 		if urlMap[r.URL.Path[1:]] == "" {
 			// fmt.Fprintln(w, "1回目")
 			var response = goVet(r.URL.Path[1:])
-			println("fuga",response)
+			println(response)
 			urlMap[r.URL.Path[1:]] = response
-			fmt.Fprintln(w, "hoge")
+			fmt.Fprintln(w, response)
 		} else {
 			fmt.Fprintln(w, urlMap[r.URL.Path[1:]])
 			// fmt.Fprintln(w, "すでに実行済みです")
