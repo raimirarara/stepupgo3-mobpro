@@ -15,7 +15,8 @@ func goVet(url string) string {
 	list_result, err := exec.Command("go", "list", "-json", "-m", "-versions", url).CombinedOutput()
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("list_err", err)
+		return err.Error()
 	}
 	fmt.Println(string(list_result))
 
@@ -37,12 +38,14 @@ func goVet(url string) string {
 
 		if err != nil {
 			fmt.Println("get err:", err)
+			return err.Error()
 		}
 
 		list_result_of_version, err := exec.Command("go", "list", "-json", "-m", urlWithVersion).CombinedOutput()
 
 		if err != nil {
 			fmt.Println("list_result_of_version err: ", err)
+			return err.Error()
 		}
 
 		type Dir struct {
@@ -60,6 +63,7 @@ func goVet(url string) string {
 
 		if err != nil {
 			fmt.Println("vet_result err: ", err)
+			return err.Error()
 		}
 		// fmt.Println(string(vet_result))
 		responseData += urlWithVersion + "\n"
@@ -80,9 +84,9 @@ func main() {
 		if urlMap[r.URL.Path[1:]] == "" {
 			// fmt.Fprintln(w, "1回目")
 			var response = goVet(r.URL.Path[1:])
-			println(response)
+			println("fuga",response)
 			urlMap[r.URL.Path[1:]] = response
-			fmt.Fprintln(w, response)
+			fmt.Fprintln(w, "hoge")
 		} else {
 			fmt.Fprintln(w, urlMap[r.URL.Path[1:]])
 			// fmt.Fprintln(w, "すでに実行済みです")
