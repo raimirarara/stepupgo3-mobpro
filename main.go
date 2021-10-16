@@ -62,10 +62,11 @@ func goVet(url string) string {
 		if err != nil {
 			fmt.Println("vet_result err: ", err)
 		}
-		fmt.Println(string(vet_result))
+		// fmt.Println(string(vet_result))
 		responseData += urlWithVersion + "\n"
 		responseData += string(vet_result)  + "\n"
 	}
+	println(responseData)
 	return responseData
 }
 
@@ -75,6 +76,7 @@ func main() {
 		fmt.Fprintf(w, "Hello, %s\n", html.EscapeString(r.URL.Path))
 		var response  = goVet(r.URL.Path[1:])
 		fmt.Fprintln(w, response)
+
 	})
 
 	http.ListenAndServe(":8000", nil)
