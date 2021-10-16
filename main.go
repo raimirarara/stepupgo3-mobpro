@@ -53,18 +53,17 @@ func goVet(url string) string {
 		json.Unmarshal(list_result_of_version, &path)
 		fmt.Println("path_dir: ", path.Dir)
 
-	
 		cmd := exec.Command("go", "vet", "-json", "./...")
 
 		cmd.Dir = path.Dir
-        vet_result, err := cmd.CombinedOutput()
+		vet_result, err := cmd.CombinedOutput()
 
 		if err != nil {
 			fmt.Println("vet_result err: ", err)
 		}
 		// fmt.Println(string(vet_result))
 		responseData += urlWithVersion + "\n"
-		responseData += string(vet_result)  + "\n"
+		responseData += string(vet_result) + "\n"
 	}
 	println(responseData)
 	return responseData
@@ -72,14 +71,25 @@ func goVet(url string) string {
 
 func main() {
 
+	urlMap := make(map[string]string, 2)
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+
 		fmt.Fprintf(w, "Hello, %s\n", html.EscapeString(r.URL.Path))
-		var response  = goVet(r.URL.Path[1:])
-		fmt.Fprintln(w, response)
+
+		if urlMap[r.URL.Path[1:]] == "" {
+			// fmt.Fprintln(w, "1回目")
+			var response = goVet(r.URL.Path[1:])
+			println(response)
+			urlMap[r.URL.Path[1:]] = response
+			fmt.Fprintln(w, response)
+		} else {
+			fmt.Fprintln(w, urlMap[r.URL.Path[1:]])
+			// fmt.Fprintln(w, "すでに実行済みです")
+		}
 
 	})
 
 	http.ListenAndServe(":8000", nil)
 
-	
 }
